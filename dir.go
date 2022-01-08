@@ -84,11 +84,12 @@ func initTemplates(base string) error {
 		actionString, _ := Asset(actionTmpl)
 		contentString, _ := Asset(contentTmpl)
 		fmt.Println("initTemplates actionTmpl = ", actionTmpl)
-		if _, err := tmpl.Parse(string(actionString)); err != nil {
+		var err error
+		if tmpl, err = tmpl.Parse(string(actionString)); err != nil {
 			return err
 		}
 		fmt.Println("initTemplates contentTmpl = ", contentTmpl)
-		if _, err := tmpl.Parse(string(contentString)); err != nil {
+		if tmpl, err = tmpl.Parse(string(contentString)); err != nil {
 			return err
 		}
 		contentTemplate[ext] = tmpl

@@ -92,22 +92,43 @@ func main() {
 	for _, name := range names {
 		fmt.Println("AssetDir name = ", name)
 	}
-	m := make(map[string]string)
-	m["/static/styles.css"] = "tpl/static/styles.css"
-	m["/static/dir.css"] = "tpl/static/dir.css"
-	m["/favicon.ico"] = "tpl/static/favicon.ico"
-	m["/static/jquery-ui.js"] = "tpl/static/jquery-ui.js"
-	m["/static/notes.css"] = "tpl/static/notes.css"
-	m["/static/notes.js"] = "tpl/static/notes.js"
-	m["/static/slides.js"] = "tpl/static/slides.js"
-	m["/static/article.css"] = "tpl/static/article.css"
-	m["/static/dir.js"] = "tpl/static/dir.js"
-	for key, value := range m {
-		http.HandleFunc(key, func(w http.ResponseWriter, r *http.Request) {
-			buffer, _ := Asset(value)
-			w.Write(buffer)
-		})
-	}
+	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		buffer, _ := Asset("tpl/static/favicon.ico")
+		w.Write(buffer)
+	})
+	http.HandleFunc("/static/styles.css", func(w http.ResponseWriter, r *http.Request) {
+		buffer, _ := Asset("tpl/static/styles.css")
+		w.Write(buffer)
+	})
+	http.HandleFunc("/static/dir.css", func(w http.ResponseWriter, r *http.Request) {
+		buffer, _ := Asset("tpl/static/dir.css")
+		w.Write(buffer)
+	})
+	http.HandleFunc("/static/jquery-ui.js", func(w http.ResponseWriter, r *http.Request) {
+		buffer, _ := Asset("tpl/static/jquery-ui.js")
+		w.Write(buffer)
+	})
+	http.HandleFunc("/static/notes.css", func(w http.ResponseWriter, r *http.Request) {
+		buffer, _ := Asset("tpl/static/notes.css")
+		w.Write(buffer)
+	})
+	http.HandleFunc("/static/notes.js", func(w http.ResponseWriter, r *http.Request) {
+		buffer, _ := Asset("tpl/static/notes.js")
+		w.Write(buffer)
+	})
+	http.HandleFunc("/static/slides.js", func(w http.ResponseWriter, r *http.Request) {
+		buffer, _ := Asset("tpl/static/slides.js")
+		w.Write(buffer)
+	})
+	http.HandleFunc("/static/article.css", func(w http.ResponseWriter, r *http.Request) {
+		buffer, _ := Asset("tpl/static/article.css")
+		w.Write(buffer)
+	})
+	http.HandleFunc("/static/dir.js", func(w http.ResponseWriter, r *http.Request) {
+		buffer, _ := Asset("tpl/static/dir.js")
+		w.Write(buffer)
+	})
+
 	if !ln.Addr().(*net.TCPAddr).IP.IsLoopback() &&
 		present.PlayEnabled && !*nativeClient && !*usePlayground {
 		log.Print(localhostWarning)
