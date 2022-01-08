@@ -7,7 +7,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -39,7 +38,9 @@ func playScript(root, transport string) {
 			buf.WriteString(s)
 			continue
 		}
-		b, err := ioutil.ReadFile(filepath.Join(root, "static", p))
+		path := filepath.Join(root, "static", p)
+		fmt.Println("playScript path = ", path)
+		b, err := Asset(path)
 		if err != nil {
 			panic(err)
 		}
@@ -53,12 +54,12 @@ func playScript(root, transport string) {
 	})
 }
 
-func initPlayground(basepath string, origin *url.URL) {
+func initPlayground(basePath string, origin *url.URL) {
 	if !present.PlayEnabled {
 		return
 	}
 	if *usePlayground {
-		playScript(basepath, "HTTPTransport")
+		playScript(basePath, "HTTPTransport")
 		return
 	}
 
@@ -73,7 +74,7 @@ func initPlayground(basepath string, origin *url.URL) {
 			return environ("GOOS=nacl")
 		}
 	}
-	playScript(basepath, "SocketTransport")
+	playScript(basePath, "SocketTransport")
 	http.Handle("/socket", socket.NewHandler(origin))
 }
 

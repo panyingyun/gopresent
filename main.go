@@ -7,7 +7,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"go/build"
 	"log"
 	"net"
 	"net/http"
@@ -29,13 +28,11 @@ var (
 	nativeClient  = flag.Bool("nacl", false, "use Native Client environment playground (prevents non-Go code execution) when using local WebSocket transport")
 )
 
-//go:generate go-bindata -o=assets/static_gen.go -pkg=assets static/...
-//go:generate go-bindata -o=assets/templates_gen.go -pkg=assets templates/...
+//go:generate go-bindata -o=tpl_gen.go -pkg=main tpl/...
 func main() {
 	flag.BoolVar(&present.PlayEnabled, "play", true, "enable playground (permit execution of arbitrary user code)")
 	flag.BoolVar(&present.NotesEnabled, "notes", false, "enable presenter notes (press 'N' from the browser to display them)")
 	flag.Parse()
-
 	if os.Getenv("GAE_ENV") == "standard" {
 		log.Print("Configuring for App Engine Standard")
 		port := os.Getenv("PORT")
@@ -51,17 +48,7 @@ func main() {
 		*usePlayground = true
 		*contentPath = "./content/"
 	}
-
-	if *basePath == "" {
-		p, err := build.Default.Import(basePkg, "", build.FindOnly)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Couldn't find gopresent files: %v\n", err)
-			fmt.Fprintf(os.Stderr, basePathMessage, basePkg)
-			os.Exit(1)
-		}
-		*basePath = p.Dir
-	}
-	err := initTemplates(*basePath)
+	err := initTemplates("tpl")
 	if err != nil {
 		log.Fatalf("Failed to parse templates: %v", err)
 	}
@@ -100,9 +87,27 @@ func main() {
 		}
 	}
 
-	initPlayground(*basePath, origin)
-	http.Handle("/static/", http.FileServer(http.Dir(*basePath)))
-
+	initPlayground("tpl", origin)
+	names := AssetNames()
+	for _, name := range names {
+		fmt.Println("AssetDir name = ", name)
+	}
+	m := make(map[string]string)
+	m["/static/styles.css"] = "tpl/static/styles.css"
+	m["/static/dir.css"] = "tpl/static/dir.css"
+	m["/favicon.ico"] = "tpl/static/favicon.ico"
+	m["/static/jquery-ui.js"] = "tpl/static/jquery-ui.js"
+	m["/static/notes.css"] = "tpl/static/notes.css"
+	m["/static/notes.js"] = "tpl/static/notes.js"
+	m["/static/slides.js"] = "tpl/static/slides.js"
+	m["/static/article.css"] = "tpl/static/article.css"
+	m["/static/dir.js"] = "tpl/static/dir.js"
+	for key, value := range m {
+		http.HandleFunc(key, func(w http.ResponseWriter, r *http.Request) {
+			buffer, _ := Asset(value)
+			w.Write(buffer)
+		})
+	}
 	if !ln.Addr().(*net.TCPAddr).IP.IsLoopback() &&
 		present.PlayEnabled && !*nativeClient && !*usePlayground {
 		log.Print(localhostWarning)

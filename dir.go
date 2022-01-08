@@ -5,6 +5,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -80,14 +81,22 @@ func initTemplates(base string) error {
 		// Read and parse the input.
 		tmpl := present.Template()
 		tmpl = tmpl.Funcs(template.FuncMap{"playable": playable})
-		if _, err := tmpl.ParseFiles(actionTmpl, contentTmpl); err != nil {
+		actionString, _ := Asset(actionTmpl)
+		contentString, _ := Asset(contentTmpl)
+		fmt.Println("initTemplates actionTmpl = ", actionTmpl)
+		if _, err := tmpl.Parse(string(actionString)); err != nil {
+			return err
+		}
+		fmt.Println("initTemplates contentTmpl = ", contentTmpl)
+		if _, err := tmpl.Parse(string(contentString)); err != nil {
 			return err
 		}
 		contentTemplate[ext] = tmpl
 	}
 
 	var err error
-	dirListTemplate, err = template.ParseFiles(filepath.Join(base, "templates/dir.tmpl"))
+	dirString, _ := Asset(filepath.Join(base, "templates/dir.tmpl"))
+	dirListTemplate, err = present.Template().Parse(string(dirString))
 	return err
 }
 
@@ -189,6 +198,7 @@ func showFile(n string) bool {
 	case ".go":
 	case ".c":
 	case ".h":
+	case ".cc":
 	case ".cpp":
 	case ".cxx":
 	case ".hpp":
