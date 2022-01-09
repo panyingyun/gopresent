@@ -5,7 +5,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -79,12 +78,12 @@ func initTemplates(base string) error {
 		tmpl = tmpl.Funcs(template.FuncMap{"playable": playable})
 		actionString, _ := Asset(actionTmpl)
 		contentString, _ := Asset(contentTmpl)
-		fmt.Println("initTemplates actionTmpl = ", actionTmpl)
+		//fmt.Println("initTemplates actionTmpl = ", actionTmpl)
 		var err error
 		if tmpl, err = tmpl.Parse(string(actionString)); err != nil {
 			return err
 		}
-		fmt.Println("initTemplates contentTmpl = ", contentTmpl)
+		//fmt.Println("initTemplates contentTmpl = ", contentTmpl)
 		if tmpl, err = tmpl.Parse(string(contentString)); err != nil {
 			return err
 		}

@@ -39,7 +39,7 @@ func playScript(root, transport string) {
 			continue
 		}
 		path := filepath.Join(root, "static", p)
-		fmt.Println("playScript path = ", path)
+		//fmt.Println("playScript path = ", path)
 		b, err := Asset(path)
 		if err != nil {
 			panic(err)
