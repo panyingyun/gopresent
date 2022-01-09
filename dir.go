@@ -19,10 +19,6 @@ import (
 	"golang.org/x/tools/present"
 )
 
-func init() {
-	http.HandleFunc("/", dirHandler)
-}
-
 // dirHandler serves a directory listing for the requested path, rooted at *contentPath.
 func dirHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/favicon.ico" {
