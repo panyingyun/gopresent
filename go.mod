@@ -1,4 +1,4 @@
-module gopresent
+module github.com/panyingyun/gopresent
 
 go 1.17
 
