@@ -201,6 +201,9 @@ func showFile(n string) bool {
 	case ".ts":
 	case ".css":
 	case ".js":
+	case ".txt":
+	case ".sql":
+	case ".api":
 	default:
 		return isDoc(n)
 	}
